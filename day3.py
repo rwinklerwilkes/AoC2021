@@ -32,18 +32,61 @@ def part_one(input_data):
     epsilon = int(epsilon_vals,2)
     print(gamma*epsilon)
 
-def part_two(input_data):
-    data = parse_data(input_data)
-    common_vals = ''.join([str(c) for c in mode(data,axis=0).mode.flatten()])
-
+def find_generator(data):
     generator = None
     position = 0
-    while generator is None:
-        pass
 
+    data_to_check = data.T[position, :]
+    data_keep = data
+    while generator is None:
+        counts = np.bincount(data_to_check)
+        if counts[0] == counts[1]:
+            keep_val = 1
+        else:
+            keep_val = np.argmax(counts)
+
+        data_keep = data_keep[np.where(data_to_check==keep_val),:][0]
+        if data_keep.shape[0] == 1:
+            generator_vals = ''.join([str(c) for c in data_keep[0]])
+            generator = int(generator_vals, 2)
+            break
+        position += 1
+        data_to_check = data_keep.T[position,:]
+        keep_val = None
+
+    return generator
+
+def find_scrubber(data):
     scrubber = None
     position = 0
+    data_to_check = data.T[position, :]
+    data_keep = data
     while scrubber is None:
-        pass
+        counts = np.bincount(data_to_check)
+        if counts[0] == counts[1]:
+            keep_val = 0
+        else:
+            keep_val = np.argmin(counts)
+
+        data_keep = data_keep[np.where(data_to_check==keep_val),:][0]
+        if data_keep.shape[0] == 1:
+            scrubber_vals = ''.join([str(c) for c in data_keep[0]])
+            scrubber = int(scrubber_vals, 2)
+            break
+        position += 1
+        data_to_check = data_keep.T[position, :]
+        keep_val = None
+
+    return scrubber
+
+def part_two(input_data):
+    data = parse_data(input_data)
+    data = np.array(data)
+
+    generator = find_generator(data)
+    scrubber = find_scrubber(data)
+    print(generator*scrubber)
+
 
 part_one(input_data)
+part_two(input_data)
