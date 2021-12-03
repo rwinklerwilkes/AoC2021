@@ -24,14 +24,26 @@ def parse_data(input_data):
 
 def part_one(input_data):
     data = parse_data(input_data)
-    int_len = len(data[0])
-    mode_vals = ''.join([str(c) for c in mode(data,axis=0).mode.flatten()])
-    gamma = int(mode_vals, 2)
-    epsilon_bin = np.binary_repr(np.invert(np.array(gamma,dtype=np.uint16)),width=16)[-int_len:]
-    epsilon = int(epsilon_bin,2)
+    most_common = [np.argmax(np.bincount(row)) for row in np.array(data).T]
+    gamma_vals = ''.join([str(c) for c in most_common])
+    gamma = int(gamma_vals, 2)
+    least_common = [np.argmin(np.bincount(row)) for row in np.array(data).T]
+    epsilon_vals = ''.join([str(c) for c in least_common])
+    epsilon = int(epsilon_vals,2)
     print(gamma*epsilon)
 
 def part_two(input_data):
-    pass
+    data = parse_data(input_data)
+    common_vals = ''.join([str(c) for c in mode(data,axis=0).mode.flatten()])
+
+    generator = None
+    position = 0
+    while generator is None:
+        pass
+
+    scrubber = None
+    position = 0
+    while scrubber is None:
+        pass
 
 part_one(input_data)
