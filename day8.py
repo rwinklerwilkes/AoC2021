@@ -17,7 +17,12 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
 
 def digits_definition():
     digits = ['abcefg', 'cf', 'acdeg', 'acdfg', 'bcdf', 'abdfg', 'abdefg', 'acf', 'abcdefg', 'abcdfg']
-    return digits
+    overlaps = {}
+    for num, d in enumerate(digits):
+        one_overlap = len([i for i in d if i in digits[1]])
+        four_overlap = len([i for i in d if i in digits[4]])
+        overlaps[f'{one_overlap}{four_overlap}{len(d)}'] = num
+    return digits, overlaps
 
 def parse_data(input_data):
     out = []
@@ -29,7 +34,7 @@ def parse_data(input_data):
     return out
 
 def part_one(input_data):
-    digits = digits_definition()
+    digits, _ = digits_definition()
     digits_count = [len(l) for l in digits]
     input_parsed = parse_data(input_data)
     check_digits = [1,4,7,8]
@@ -40,9 +45,36 @@ def part_one(input_data):
         counter += len(ovlen)
     print(counter)
 
+def determine_mapping(signal_patterns):
+    _, overlaps = digits_definition()
+    lengths = {len(l): l for l in signal_patterns}
+    #one, four, seven each have unique lengths and their overlap with each digit along with each digit length uniquely
+    #determines which number each string represents
+    check_overlap = [lengths[2],lengths[4]]
+    mapping = {}
+    for s in signal_patterns:
+        if s not in mapping:
+            one_overlap = len([i for i in s if i in check_overlap[0]])
+            four_overlap = len([i for i in s if i in check_overlap[1]])
+            check_string = f'{one_overlap}{four_overlap}{len(s)}'
+            mapping[''.join(sorted(s))] = overlaps[check_string]
+    return mapping
+
+
 
 def part_two(input_data):
-    mapping = {}
+    input_parsed = parse_data(input_data)
+    total = 0
+    for signal_patterns, output_values in input_parsed:
+        add_str = ''
+        mapping = determine_mapping(signal_patterns)
+        for o in output_values:
+            check_map = ''.join(sorted(o))
+            add_str += str(mapping[check_map])
+        total += int(add_str)
+    print(total)
+
 
 
 part_one(input_data)
+part_two(input_data)
