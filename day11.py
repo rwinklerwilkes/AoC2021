@@ -24,10 +24,10 @@ def flash_point(data, row, col):
     adj = adj + 1
     continue_flashing = []
     for i in np.argwhere(adj > 9):
-        ir = i[0]
-        ic = i[1]
+        ir = i[0] + row - 1
+        ic = i[1] + col - 1
         if not (ir == row and ic == col):
-            continue_flashing.append((ir + row - 1, ic + col-1))
+            continue_flashing.append((ir, ic))
     data[row-1:row+2, col-1:col+2] = adj
     return data, continue_flashing
 
@@ -57,7 +57,7 @@ def parse_data(input_data):
     data = np.array([[int(i) for i in row] for row in input_data.split('\n')])
     return data
 
-def run_game(data, num_rounds):
+def run_game(data, num_rounds, stop_early = True):
     total_flashes = 0
     for i in range(num_rounds):
         data = np.pad(data, 1, constant_values=(-10))
@@ -66,15 +66,21 @@ def run_game(data, num_rounds):
         total_flashes += num_flashes
         data = set_to_zero(data)
         data = data[1:-1,1:-1]
+        if np.max(data) == 0:
+            return data, i
     return data, total_flashes
 
 def part_one(input_data):
     data = parse_data(input_data)
-    data, answer = run_game(data, num_rounds=20)
+    data, answer = run_game(data, num_rounds=100, stop_early=False)
     print(answer)
     return data
 
 def part_two(input_data):
-    pass
+    data = parse_data(input_data)
+    data, answer = run_game(data, num_rounds=10000, stop_early=True)
+    print(answer+1)
+    return data
 
-data = part_one(test_data)
+data = part_one(input_data)
+data = part_two(input_data)
