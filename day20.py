@@ -42,7 +42,7 @@ def part_one(input_data):
     num_rounds = 2
     new_img = img.copy()
     for i in range(num_rounds):
-        new_img = ndi.convolve(new_img, weights=kernel, mode="constant", cval = 0)
+        new_img = ndi.convolve(new_img, weights=kernel, mode="constant", cval = i%2)
         new_img = np.isin(new_img, enhance_algo)*1
 
     print(new_img.sum())
