@@ -1,7 +1,8 @@
 from aocd import get_data
 import re
+import functools
 
-mx = r'^[a-zA-Z0-9\/:]*\/day([0-9]{1,}).py$'
+mx = r'^[a-zA-Z0-9\\:]*\\day([0-9]{1,}).py$'
 day = int(re.match(mx, __file__).group(1))
 input_data = get_data(year=2021, day=day)
 test_data = """Player 1 starting position: 4
@@ -64,7 +65,34 @@ def part_one(input_data):
     answer = play_game(p1,p2)
     print(answer)
 
-def part_two(input_data):
-    pass
+@functools.cache
+def play_game_part_two(positions, scores, player=0):
+    probability_of_rolls = {3: 1, 4: 3, 5: 6, 6: 7, 7: 6, 8: 3, 9: 1}
+    positions = list(positions)
+    scores = list(scores)
+    wins = [0, 0]
 
-part_one(input_data)
+    start_pos = positions[player]
+    start_score = scores[player]
+
+    for roll, universes in probability_of_rolls.items():
+        positions[player] = (start_pos + roll) % 10 or 10
+        scores[player] = start_score + positions[player]
+        if scores[player] >= 21:
+            wins[player] += universes
+        else:
+            more_wins = play_game_part_two(tuple(positions), tuple(scores), (player + 1) % 2)
+            for idx, count_of_wins in enumerate(more_wins):
+                wins[idx] += universes * count_of_wins
+    return wins
+
+def part_two(input_data):
+    positions = tuple([int(j[-1]) for j in input_data.split('\n')])
+    scores = (0,0)
+
+    wins = play_game_part_two(positions, scores)
+    print(wins)
+
+
+# part_one(input_data)
+part_two(input_data)
