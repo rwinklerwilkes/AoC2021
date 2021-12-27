@@ -2,9 +2,7 @@ from aocd import get_data
 import re
 from collections import defaultdict
 
-mx = r'^[a-zA-Z0-9\/:]*\/day([0-9]{1,}).py$'
-day = int(re.match(mx, __file__).group(1))
-input_data = get_data(year=2021, day=day)
+input_data = get_data(year=2021, day=24)
 
 test_data = """inp w
 add z w
@@ -88,8 +86,7 @@ class ALU:
         for i, inst in enumerate(all_instructions):
             program.append(self.parse_instruction(inst))
 
-        all_instructions = all_instructions[i:]
-        return program, all_instructions
+        return program
 
     def run_program(self, program, input):
         self.reset()
@@ -97,11 +94,19 @@ class ALU:
             inst(input)
 
 def part_one(input_data):
-    pass
+    input_test = [int(i) for i in '45989929969199']
+    alu = ALU()
+    program = alu.parse_program(input_data)
+    alu.run_program(program, input_test)
+    result = alu.storage['z']
+    if result == 0:
+        # valid
+        print('Valid')
+    elif result != 0:
+        # invalid
+        print(f'Invalid, {result}')
 
 def part_two(input_data):
     pass
 
-alu = ALU()
-prog, inst = alu.parse_program(test_data)
-alu.run_program(prog, [8])
+part_one(input_data)
