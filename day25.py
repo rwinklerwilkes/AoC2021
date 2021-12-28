@@ -102,8 +102,4 @@ def part_one(input_data):
     answer = round_counter
     print(answer)
 
-
-def part_two(input_data):
-    pass
-
 part_one(input_data)
